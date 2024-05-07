@@ -1,5 +1,6 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native'
-import {useState} from 'react'
+import {Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View} from 'react-native'
+import {ReactElement, ReactNode, useState} from 'react'
+import {Checkbox} from 'expo-checkbox'
 
 type Tasks = {
     id: number,
@@ -34,9 +35,12 @@ export default function App() {
             <TextInput value={textInputValue}
                        onChangeText={setTextInputValue}
                        style={styles.textInput}/>
-            <View>
+            <View style={{width: 300}}>
                 {tasks.map((el) => {
-                    return <View key={el.id}>
+                    return <View key={el.id} style={[globalStyles.border, styles.taskBox]}>
+                        <Checkbox value={el.isDone}
+                                  onValueChange={() => {
+                                  }}/>
                         <Text>{el.title}</Text>
                     </View>
                 })}
@@ -44,6 +48,13 @@ export default function App() {
         </View>
     )
 }
+
+const HideKeyboard = ({children}: { children: ReactNode }): ReactElement => {
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+}
+
 
 const styles = StyleSheet.create({
     container: {
@@ -59,16 +70,22 @@ const styles = StyleSheet.create({
         fontSize: 25,
         borderRadius: 5,
         padding: 10,
-        borderStyle: 'solid',
-        borderWidth: 2,
-        borderColor: 'blue'
+        marginBottom: 10
+    },
+    taskBox: {
+        flexDirection: 'row',
+        gap: 10,
+        backgroundColor: '#3e69c4',
+        marginBottom: 5,
+        alignItems: 'center',
+        padding: 5
     }
 })
 
-// const globalStyles = StyleSheet.create({
-//     border: {
-//         borderStyle: 'solid',
-//         borderWidth: 2,
-//         borderColor: 'blue'
-//     }
-// })
+const globalStyles = StyleSheet.create({
+    border: {
+        borderStyle: 'solid',
+        borderWidth: 2,
+        borderColor: '#121313'
+    }
+})
