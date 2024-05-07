@@ -1,6 +1,7 @@
 import {Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View} from 'react-native'
-import { ReactNode, useState} from 'react'
+import {ReactNode, useState} from 'react'
 import {Checkbox} from 'expo-checkbox'
+import {Input} from './input/Input'
 
 type Tasks = {
     id: number,
@@ -11,6 +12,7 @@ type Tasks = {
 
 export default function App() {
     const [textInputValue, setTextInputValue] = useState('TextInput')
+    const [show, setShow] = useState(0)
     const [tasks, setTasks] = useState<Tasks[]>([
         {
             id: 1,
@@ -40,12 +42,17 @@ export default function App() {
         setTextInputValue('')
     }
 
-    const deleteTask = (id: number) => {
-        setTasks(tasks.filter((el) => el.id !== id))
+    const deleteTask = (taskId: number) => {
+        setTasks(tasks.filter((el) => el.id !== taskId))
     }
 
-    const changeCheckBox = (id: number, isDone: boolean) => {
-        setTasks(tasks.map((el) => el.id === id ? {...el, isDone: !isDone} : el))
+    const changeCheckBox = (taskId: number, isDone: boolean) => {
+        setTasks(tasks.map((el) => el.id === taskId ? {...el, isDone: !isDone} : el))
+    }
+
+    const changeTitle = (taskId:number, title:string) => {
+        setTasks(tasks.map((el) => el.id === taskId ? {...el, title} : el))
+        setShow(0)
     }
 
     return (
@@ -65,7 +72,11 @@ export default function App() {
                     return <View key={el.id} style={[globalStyles.border, styles.taskBox]}>
                         <Checkbox value={el.isDone}
                                   onValueChange={() => changeCheckBox(el.id, el.isDone)}/>
-                        <Text>{el.title}</Text>
+                        {show === el.id
+                            ? <Input title={el.title}
+                                     id={el.id}
+                                     changeTitle={changeTitle}/>
+                            : <Text onPress={() => setShow(el.id)}>{el.title}</Text>}
                         <View>
                             <Button title={'Delete Task'} onPress={() => deleteTask(el.id)}/>
                         </View>
@@ -106,6 +117,13 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         alignItems: 'center',
         padding: 5
+    },
+    textChange: {
+        width: 150,
+        backgroundColor: '#c9be1c',
+        color: '#fff',
+        fontSize: 20,
+        padding: 10
     }
 })
 
