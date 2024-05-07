@@ -1,5 +1,5 @@
-import {Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View} from 'react-native'
-import {ReactElement, ReactNode, useState} from 'react'
+import {Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View} from 'react-native'
+import { ReactNode, useState} from 'react'
 import {Checkbox} from 'expo-checkbox'
 
 type Tasks = {
@@ -30,18 +30,45 @@ export default function App() {
     ])
 
 
+    const addTask = () => {
+        const newTask = {
+            id: tasks.length + 1,
+            title: textInputValue,
+            isDone: false
+        }
+        setTasks([...tasks, newTask])
+        setTextInputValue('')
+    }
+
+    const deleteTask = (id: number) => {
+        setTasks(tasks.filter((el) => el.id !== id))
+    }
+
+    const changeCheckBox = (id: number, isDone: boolean) => {
+        setTasks(tasks.map((el) => el.id === id ? {...el, isDone: !isDone} : el))
+    }
+
     return (
         <View style={styles.container}>
-            <TextInput value={textInputValue}
-                       onChangeText={setTextInputValue}
-                       style={styles.textInput}/>
+            <HideKeyboard>
+                <View style={[globalStyles.border, {width: '80%', alignItems: 'center', paddingVertical: 20}]}>
+                    <TextInput value={textInputValue}
+                               onChangeText={setTextInputValue}
+                               style={styles.textInput}/>
+                </View>
+            </HideKeyboard>
+            <View style={{marginBottom: 5}}>
+                <Button title={'Add Task'} onPress={addTask}/>
+            </View>
             <View style={{width: 300}}>
                 {tasks.map((el) => {
                     return <View key={el.id} style={[globalStyles.border, styles.taskBox]}>
                         <Checkbox value={el.isDone}
-                                  onValueChange={() => {
-                                  }}/>
+                                  onValueChange={() => changeCheckBox(el.id, el.isDone)}/>
                         <Text>{el.title}</Text>
+                        <View>
+                            <Button title={'Delete Task'} onPress={() => deleteTask(el.id)}/>
+                        </View>
                     </View>
                 })}
             </View>
@@ -49,8 +76,8 @@ export default function App() {
     )
 }
 
-const HideKeyboard = ({children}: { children: ReactNode }): ReactElement => {
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+const HideKeyboard = ({children}: { children: ReactNode }) => {
+    return <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 }
