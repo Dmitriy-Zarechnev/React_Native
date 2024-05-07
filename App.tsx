@@ -1,4 +1,4 @@
-import {StyleSheet, TextInput, View} from 'react-native'
+import {StyleSheet, Text, TextInput, View} from 'react-native'
 import {useState} from 'react'
 
 type Tasks = {
@@ -34,6 +34,13 @@ export default function App() {
             <TextInput value={textInputValue}
                        onChangeText={setTextInputValue}
                        style={styles.textInput}/>
+            <View>
+                {tasks.map((el) => {
+                    return <View key={el.id}>
+                        <Text>{el.title}</Text>
+                    </View>
+                })}
+            </View>
         </View>
     )
 }
